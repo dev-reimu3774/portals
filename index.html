@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Portfolio & Websites</title>
+    <!-- Google Fonts: 読みやすく親しみやすいフォント -->
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f7f9fc;
+            --card-bg: #ffffff;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --accent-color: #6c5ce7;
+            --accent-hover: #5b4be2;
+            --tag-bg: #edf2f7;
+            --radius-large: 24px;
+            --radius-medium: 16px;
+            --radius-pill: 50px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ヘッダーセクション */
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.2);
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            color: var(--text-sub);
+            font-size: 15px;
+        }
+
+        /* ウェブサイト一覧グリッド */
+        .site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
+        }
+
+        /* 各カードのスタイル */
+        .site-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+        }
+
+        .site-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 35px rgba(0, 0, 0, 0.08);
+            border-color: rgba(108, 92, 231, 0.2);
+        }
+
+        .card-content h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .card-content p {
+            font-size: 14px;
+            color: var(--text-sub);
+            margin-bottom: 16px;
+        }
+
+        /* タグ（使用技術など） */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 20px;
+        }
+
+        .tag {
+            background-color: var(--tag-bg);
+            color: var(--text-sub);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-weight: 500;
+        }
+
+        /* リンクボタン */
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .visit-btn {
+            background-color: var(--tag-bg);
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .site-card:hover .visit-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        /* フッター */
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ヘッダー（プロフィールやサイトのタイトル） -->
+        <header>
+            <div class="avatar">✨</div>
+            <h1>My Web Portal</h1>
+            <p class="subtitle">これまでに制作したウェブサイト・ツールのまとめ場所</p>
+        </header>
+
+        <!-- サイトカード一覧 -->
+        <div class="site-grid">
+
+            <!-- サイト1 -->
+            <a href="https://example.com" target="_blank" class="site-card">
+                <div class="card-content">
+                    <h2>サンプルアプリ 1</h2>
+                    <p>タスク管理をシンプルに行える、ブラウザ完結型の便利ツールです。</p>
+                    <div class="tags">
+                        <span class="tag">HTML / CSS</span>
+                        <span class="tag">JavaScript</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>サイトを見る</span>
+                    <div class="visit-btn">→</div>
+                </div>
+            </a>
+
+            <!-- サイト2 -->
+            <a href="https://example.com" target="_blank" class="site-card">
+                <div class="card-content">
+                    <h2>ポートフォリオサイト</h2>
+                    <p>自分の経歴や制作実績を紹介するためのメインの自己紹介ページ。</p>
+                    <div class="tags">
+                        <span class="tag">React</span>
+                        <span class="tag">Tailwind</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>サイトを見る</span>
+                    <div class="visit-btn">→</div>
+                </div>
+            </a>
+
+            <!-- サイト3 -->
+            <a href="https://example.com" target="_blank" class="site-card">
+                <div class="card-content">
+                    <h2>お天気チェッカー</h2>
+                    <p>地域ごとの天気をサクッと確認できるミニマムな天気予報アプリ。</p>
+                    <div class="tags">
+                        <span class="tag">API</span>
+                        <span class="tag">Vue.js</span>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <span>サイトを見る</span>
+                    <div class="visit-btn">→</div>
+                </div>
+            </a>
+
+        </div>
+
+        <footer>
+            <p>&copy; 2026 My Portal. All rights reserved.</p>
+        </footer>
+    </div>
+
+</body>
+</html>
