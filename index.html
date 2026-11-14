@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f4f7fb;
+            --card-bg: #ffffff;
+            --text-main: #2d3748;
+            --text-sub: #718096;
+            --accent-color: #6c5ce7;
+            --accent-light: #efedff;
+            --admin-color: #10b981;
+            --admin-light: #d1fae5;
+            --tag-bg: #edf2f7;
+            --radius-large: 28px;
+            --radius-medium: 18px;
+            --radius-pill: 50px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Zen Maru Gothic', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 24px 20px 60px;
+        }
+
+        /* 右上の管理者パネルボタンエリア */
+        .top-bar {
+            max-width: 960px;
+            margin: 0 auto 10px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .admin-toggle-btn {
+            background-color: var(--card-bg);
+            color: var(--text-sub);
+            border: 2px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+        }
+
+        .admin-toggle-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        /* 管理者モードログイン中のボタンスタイル */
+        .admin-toggle-btn.logged-in {
+            background-color: var(--admin-light);
+            color: #065f46;
+            border-color: var(--admin-color);
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+        }
+
+        /* ヘッダー */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .avatar {
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #a29bfe, #6c5ce7);
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 34px;
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.25);
+        }
+
+        h1 {
+            font-size: 26px;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+
+        p.subtitle {
+            color: var(--text-sub);
+            font-size: 14px;
+        }
+
+        /* 管理者専用コントロールパネル */
+        .admin-controls {
+            display: none;
+            margin-top: 20px;
+            padding: 14px 20px;
+            background-color: var(--card-bg);
+            border-radius: var(--radius-large);
+            border: 2px dashed var(--admin-color);
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        body.is-admin .admin-controls {
+            display: inline-flex;
+        }
+
+        .admin-badge {
+            font-size: 12px;
+            font-weight: 700;
+            color: #065f46;
+            background-color: var(--admin-light);
+            padding: 4px 12px;
+            border-radius: var(--radius-pill);
+        }
+
+        .add-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(108, 92, 231, 0.25);
+            transition: all 0.2s ease;
+        }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            background-color: #5b4be2;
+        }
+
+        /* グリッドレイアウト */
+        .site-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 24px;
+        }
+
+        /* カードデザイン */
+        .site-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-large);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            text-decoration: none;
+            color: inherit;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        .site-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 36px rgba(108, 92, 231, 0.12);
+            border-color: var(--accent-light);
+        }
+
+        /* URL表示ピル */
+        .url-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--bg-color);
+            color: var(--text-sub);
+            font-size: 12px;
+            padding: 5px 12px;
+            border-radius: var(--radius-pill);
+            margin-bottom: 14px;
+            max-width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .card-content h2 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
+
+        .card-content p {
+            font-size: 13.5px;
+            color: var(--text-sub);
+            margin-bottom: 18px;
+        }
+
+        /* ジャンプボタンエリア */
+        .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 12px;
+            border-top: 1px dashed #edf2f7;
+        }
+
+        .jump-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        .jump-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--accent-light);
+            color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .site-card:hover .jump-icon {
+            background-color: var(--accent-color);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        /* 削除ボタン（管理者モード時のみ表示） */
+        .delete-btn {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            background: #fee2e2;
+            color: #ef4444;
+            border: 2px solid white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+            transition: transform 0.2s;
+        }
+
+        .delete-btn:hover {
+            transform: scale(1.15);
+            background: #ef4444;
+            color: white;
+        }
+
+        body.is-admin .delete-btn {
+            display: flex;
+        }
+
+        /* モーダル共通スタイル */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-large);
+            padding: 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            animation: popIn 0.2s ease-out;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
+        }
+
+        .form-group {
+            margin-bottom: 14px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 14px;
+            border: 2px solid #edf2f7;
+            border-radius: var(--radius-medium);
+            font-family: inherit;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 12.5px;
+            margin-top: 6px;
+            display: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: #edf2f7;
+            border: none;
+            padding: 10px 18px;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-weight: 700;
+            color: var(--text-sub);
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: var(--radius-pill);
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 右上の管理者パネルボタン -->
+    <div class="top-bar">
+        <button class="admin-toggle-btn" id="adminToggleBtn" onclick="handleAdminClick()">
+            🔒 管理者パネル
+        </button>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="avatar">🚀</div>
+            <h1>My Web Portal</h1>
+            <p class="subtitle">カードをクリックすると各URLへジャンプします</p>
+
+            <!-- 認証後のみ表示される管理者メニュー -->
+            <div class="admin-controls">
+                <span class="admin-badge">✨ 管理者モード中</span>
+                <button class="add-btn" onclick="openAddModal()">＋ ページを追加</button>
+            </div>
+        </header>
+
+        <!-- サイト一覧がここに表示されます -->
+        <div class="site-grid" id="siteGrid"></div>
+
+        <footer>
+            <p>&copy; 2026 My Portal</p>
+        </footer>
+    </div>
+
+    <!-- 管理者パスワード入力モーダル -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal">
+            <h3>🔒 管理者ログイン</h3>
+            <div class="form-group">
+                <label>パスワードを入力してください</label>
+                <input type="password" id="adminPasswordInput" placeholder="パスワード" onkeydown="if(event.key==='Enter') verifyPassword()">
+                <div class="error-msg" id="loginError">パスワードが正しくありません</div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeLoginModal()">キャンセル</button>
+                <button class="btn-save" onclick="verifyPassword()">開く</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ページ追加用モーダル -->
+    <div class="modal-overlay" id="addModal">
+        <div class="modal">
+            <h3>新しいページを追加</h3>
+            <div class="form-group">
+                <label>サイト名</label>
+                <input type="text" id="siteTitle" placeholder="例: 自作メモアプリ">
+            </div>
+            <div class="form-group">
+                <label>ジャンプ先URL</label>
+                <input type="url" id="siteUrl" placeholder="https://...">
+            </div>
+            <div class="form-group">
+                <label>ひとこと説明</label>
+                <input type="text" id="siteDesc" placeholder="例: シンプルなメモ帳ツールです">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeAddModal()">キャンセル</button>
+                <button class="btn-save" onclick="addSite()">追加する</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASS = "admin123";
+        let isAdmin = false;
+
+        // 初期表示用のサンプルデータ
+        const defaultSites = [
+            {
+                title: "サンプルアプリ 1",
+                url: "https://example.com",
+                desc: "タスク管理をシンプルに行える、ブラウザ完結型の便利ツールです。"
+            },
+            {
+                title: "ポートフォリオサイト",
+                url: "https://github.com",
+                desc: "制作実績やコードを公開しているメインページです。"
+            },
+            {
+                title: "お天気チェッカー",
+                url: "https://www.jma.go.jp",
+                desc: "天気をサクッと確認できるミニマムなWebアプリ。"
+            }
+        ];
+
+        // ローカルストレージからデータを取得
+        let sites = JSON.parse(localStorage.getItem('myPortalSites')) || defaultSites;
+
+        // サイト一覧の描画
+        function renderSites() {
+            const grid = document.getElementById('siteGrid');
+            grid.innerHTML = '';
+
+            sites.forEach((site, index) => {
+                const displayUrl = site.url.replace(/^https?:\/\//, '');
+
+                const card = document.createElement('a');
+                card.href = site.url;
+                card.target = "_blank";
+                card.rel = "noopener noreferrer";
+                card.className = "site-card";
+
+                card.innerHTML = `
+                    <button class="delete-btn" title="削除" onclick="deleteSite(event, ${index})">✕</button>
+                    <div class="card-content">
+                        <div class="url-badge">🔗 ${displayUrl}</div>
+                        <h2>${site.title}</h2>
+                        <p>${site.desc}</p>
+                    </div>
+                    <div class="card-footer">
+                        <span class="jump-label">サイトへジャンプ</span>
+                        <div class="jump-icon">↗</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // 右上の「管理者パネル」ボタン押下時の処理
+        function handleAdminClick() {
+            if (isAdmin) {
+                // ログアウト確認
+                if (confirm('管理者モードを終了しますか？')) {
+                    isAdmin = false;
+                    updateAdminUI();
+                }
+            } else {
+                // パスワードモーダルを開く
+                document.getElementById('loginModal').classList.add('active');
+                document.getElementById('loginError').style.display = 'none';
+                const input = document.getElementById('adminPasswordInput');
+                input.value = '';
+                setTimeout(() => input.focus(), 100);
+            }
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('active');
+        }
+
+        // パスワード認証
+        function verifyPassword() {
+            const inputVal = document.getElementById('adminPasswordInput').value;
+            if (inputVal === ADMIN_PASS) {
+                isAdmin = true;
+                closeLoginModal();
+                updateAdminUI();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        // 管理者モードのUI反映
+        function updateAdminUI() {
+            const btn = document.getElementById('adminToggleBtn');
+            if (isAdmin) {
+                document.body.classList.add('is-admin');
+                btn.classList.add('logged-in');
+                btn.innerHTML = '🔓 管理者パネル（終了）';
+            } else {
+                document.body.classList.remove('is-admin');
+                btn.classList.remove('logged-in');
+                btn.innerHTML = '🔒 管理者パネル';
+            }
+        }
+
+        // ページ追加モーダルの開閉
+        function openAddModal() {
+            if (!isAdmin) return;
+            document.getElementById('addModal').classList.add('active');
+        }
+
+        function closeAddModal() {
+            document.getElementById('addModal').classList.remove('active');
+            document.getElementById('siteTitle').value = '';
+            document.getElementById('siteUrl').value = '';
+            document.getElementById('siteDesc').value = '';
+        }
+
+        // サイトの追加保存
+        function addSite() {
+            if (!isAdmin) return;
+
+            const title = document.getElementById('siteTitle').value.trim();
+            let url = document.getElementById('siteUrl').value.trim();
+            const desc = document.getElementById('siteDesc').value.trim() || '自作ウェブサイト';
+
+            if (!title || !url) {
+                alert('サイト名とURLを入力してください！');
+                return;
+            }
+
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+
+            sites.push({ title, url, desc });
+            localStorage.setItem('myPortalSites', JSON.stringify(sites));
+            renderSites();
+            closeAddModal();
+        }
+
+        // サイトの削除（管理者モード時のみ）
+        function deleteSite(event, index) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!isAdmin) return;
+
+            if (confirm('このページを一覧から削除しますか？')) {
+                sites.splice(index, 1);
+                localStorage.setItem('myPortalSites', JSON.stringify(sites));
+                renderSites();
+            }
+        }
+
+        // 初回描画
+        renderSites();
+    </script>
+</body>
+</html>
